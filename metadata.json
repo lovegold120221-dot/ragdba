@@ -1,0 +1,6 @@
+{
+  "name": "Eburon BE Data",
+  "description": "Belgium Government Data Assistant",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
