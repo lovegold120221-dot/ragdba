@@ -4,6 +4,13 @@ import { LogIn, Shield, FileText, CheckCircle2, AlertCircle, Eye, EyeOff, Mail, 
 import { auth, signInWithPopup, googleProvider } from '../lib/firebase';
 import { User } from 'firebase/auth';
 
+// Default export the AuthPage component
+const AuthPage = () => {
+  // Component code
+};
+
+export default AuthPage;
+
 const GDPR_PRIVACY_TEXT = `By clicking "Sign in with Google", I consent to the processing of my personal data as outlined in the following document:
 
 • Personal Data: Name, email address, and profile photo provided by Google authentication.
