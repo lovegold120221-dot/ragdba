@@ -222,19 +222,31 @@ export function Sidebar({
         </div>
       )}
 
-      <aside className={sidebarClasses}>
-        {/* Brand Logo Header */}
-        <div className={`flex items-center mb-6 ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
-          <div className="flex items-center gap-3">
-            <img src="https://eburon.ai/icon-eburon.svg" alt="Eburon Logo" className="w-8 h-8 shrink-0" />
-            {!isCollapsed && (
-              <div>
-                <h1 className="text-base font-bold tracking-tight text-neutral-900 dark:text-white">Eburon <span className="text-red-600 dark:text-red-500">NL Data</span></h1>
-                <p className="text-[9px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider font-mono font-semibold">Authentic RAG Gateway</p>
-              </div>
-            )}
+        <aside className={sidebarClasses}>
+          {/* Mobile-only "Eburon NL Data Assistant" title header - hide main brand logo on mobile */}
+          {isOpenMobile && (
+            <div className="md:hidden bg-neutral-50 dark:bg-neutral-900 border-b border-neutral-200 dark:border-neutral-800 px-4 py-3 -mx-6">
+              <h2 className="text-sm font-semibold text-neutral-900 dark:text-white">EBURON NL DATA ASSISTANT</h2>
+              <p className="text-xs text-neutral-500 dark:text-neutral-400 mt-1">Authentic RAG Gateway</p>
+            </div>
+          )}
+
+          {/* Brand Logo Header - show compact version on mobile, full on desktop */}
+          <div className={`flex items-center mb-6 ${isCollapsed ? 'justify-center' : 'justify-between'} ${isOpenMobile ? 'mt-2' : ''}`}>            <div className="flex items-center gap-3">
+              <img src="https://eburon.ai/icon-eburon.svg" alt="Eburon Logo" className="w-8 h-8 shrink-0" />
+              {isOpenMobile ? (
+                <div>
+                  <h1 className="text-base font-bold tracking-tight text-neutral-900 dark:text-white">EBURON NL DATA ASSISTANT</h1>
+                  <p className="text-[9px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider font-mono font-semibold">Authentic RAG Gateway</p>
+                </div>
+              ) : !isCollapsed && (
+                <div>
+                  <h1 className="text-base font-bold tracking-tight text-neutral-900 dark:text-white">Eburon <span className="text-red-600 dark:text-red-500">NL Data</span></h1>
+                  <p className="text-[9px] text-neutral-500 dark:text-neutral-400 uppercase tracking-wider font-mono font-semibold">Authentic RAG Gateway</p>
+                </div>
+              )}
+            </div>
           </div>
-        </div>
 
         {/* New Chat Button */}
         <button 
@@ -283,78 +295,68 @@ export function Sidebar({
           )}
         </nav>
 
-        {/* Government Data Modules & Admin Tools */}
-        {user && user.uid !== 'federal-citizen-node' && (
-          <div className="space-y-1 pt-3 border-t border-neutral-200 dark:border-neutral-800 mb-4 shrink-0">
-            <div className="flex items-center justify-between mb-2">
-              <div className="text-[10px] uppercase tracking-widest text-neutral-500 dark:text-neutral-400 mb-1.5 px-1 font-bold">
-                Admin Controls
-              </div>
-              {isCollapsed && (
-                <Shield className="w-3.5 h-3.5 text-neutral-400 dark:text-neutral-500" />
-              )}
-            </div>
-          </div>
-        )}
-          {!isCollapsed && (
+        {/* Authentic Registries Section */}
+        {user && user.uid !== 'federal-citizen-node' && !isCollapsed && (
+          <div className="pt-3 border-t border-neutral-200 dark:border-neutral-800 mb-2 shrink-0">
             <div className="text-[10px] uppercase tracking-widest text-neutral-500 dark:text-neutral-400 mb-1.5 px-1 font-bold">
               Authentic Registries
             </div>
-          )}
-          
-          <button 
-            onClick={() => { onOpenPhotoAnalyzer(); onCloseMobile(); }}
-            title="Analyze Official Doc / ID"
-            className={`w-full text-left px-3 py-2 text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-lg flex items-center gap-2.5 transition-colors cursor-pointer ${isCollapsed ? 'justify-center px-0' : ''}`}
-          >
-            <CheckCircle2 className="w-4 h-4 text-red-600 dark:text-red-500 shrink-0" />
-            {!isCollapsed && <span>Analyze Official Doc / ID</span>}
-          </button>
+            <div className="space-y-1">
+              <button 
+                onClick={() => { onOpenPhotoAnalyzer(); onCloseMobile(); }}
+                title="Analyze Official Doc / ID"
+                className="w-full text-left px-3 py-2 text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-lg flex items-center gap-2.5 transition-colors cursor-pointer"
+              >
+                <CheckCircle2 className="w-4 h-4 text-red-600 dark:text-red-500 shrink-0" />
+                <span>Analyze Official Doc / ID</span>
+              </button>
 
-          <button 
-            onClick={() => { onOpenRegistry(); onCloseMobile(); }}
-            title="Source & Service Registry"
-            className={`w-full text-left px-3 py-2 text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-lg flex items-center gap-2.5 transition-colors cursor-pointer ${isCollapsed ? 'justify-center px-0' : ''}`}
-          >
-            <Database className="w-4 h-4 text-sky-600 dark:text-sky-500 shrink-0" />
-            {!isCollapsed && <span>Source & Service Registry</span>}
-          </button>
+              <button 
+                onClick={() => { onOpenRegistry(); onCloseMobile(); }}
+                title="Source & Service Registry"
+                className="w-full text-left px-3 py-2 text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-lg flex items-center gap-2.5 transition-colors cursor-pointer"
+              >
+                <Database className="w-4 h-4 text-sky-600 dark:text-sky-500 shrink-0" />
+                <span>Source & Service Registry</span>
+              </button>
 
-          <button 
-            onClick={() => { onOpenGraph(); onCloseMobile(); }}
-            title="Belgian Knowledge Graph"
-            className={`w-full text-left px-3 py-2 text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-lg flex items-center gap-2.5 transition-colors cursor-pointer ${isCollapsed ? 'justify-center px-0' : ''}`}
-          >
-            <Network className="w-4 h-4 text-emerald-600 dark:text-emerald-500 shrink-0" />
-            {!isCollapsed && <span>Belgian Knowledge Graph</span>}
-          </button>
+              <button 
+                onClick={() => { onOpenGraph(); onCloseMobile(); }}
+                title="Belgian Knowledge Graph"
+                className="w-full text-left px-3 py-2 text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-lg flex items-center gap-2.5 transition-colors cursor-pointer"
+              >
+                <Network className="w-4 h-4 text-emerald-600 dark:text-emerald-500 shrink-0" />
+                <span>Belgian Knowledge Graph</span>
+              </button>
 
-          <button 
-            onClick={() => { onOpenAdmin(); onCloseMobile(); }}
-            title="Admin Control Dashboard"
-            className={`w-full text-left px-3 py-2 text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-lg flex items-center gap-2.5 transition-colors cursor-pointer ${isCollapsed ? 'justify-center px-0' : ''}`}
-          >
-            <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-500 shrink-0" />
-            {!isCollapsed && <span>Admin Control Dashboard</span>}
-          </button>
-        </div>
-
-        {/* Federal Gateway Connection Status */}
-        <div className="pt-3 border-t border-neutral-200 dark:border-neutral-800 mb-3 shrink-0">
-          <div className={`flex items-center justify-between bg-neutral-50 dark:bg-neutral-900/50 p-2 rounded-lg border border-neutral-200 dark:border-neutral-800 ${isCollapsed ? 'flex-col gap-2' : ''}`}>
-            <div className="flex items-center gap-2 min-w-0">
-              <div className="w-7 h-7 rounded-full bg-red-600 text-white font-bold text-xs flex items-center justify-center shrink-0 shadow-2xs">
-                BE
-              </div>
-              {!isCollapsed && (
-                <div className="min-w-0 truncate">
-                  <p className="text-xs font-bold truncate text-neutral-900 dark:text-neutral-100">Federal Citizen Node</p>
-                  <p className="text-[9px] text-emerald-600 dark:text-emerald-400 font-bold truncate font-mono">● ONLINE & VERIFIED</p>
-                </div>
-              )}
+              <button 
+                onClick={() => { onOpenAdmin(); onCloseMobile(); }}
+                title="Admin Control Dashboard"
+                className="w-full text-left px-3 py-2 text-xs font-medium text-neutral-700 dark:text-neutral-300 hover:text-neutral-900 dark:hover:text-white hover:bg-neutral-100 dark:hover:bg-neutral-900 rounded-lg flex items-center gap-2.5 transition-colors cursor-pointer"
+              >
+                <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-500 shrink-0" />
+                <span>Admin Control Dashboard</span>
+              </button>
             </div>
           </div>
-        </div>
+        )}
+
+        {/* Collapsible config for Admins only when collapsed */}
+        {user && user.uid !== 'federal-citizen-node' && isCollapsed && (
+          <div className="pt-3 border-t border-neutral-200 dark:border-neutral-800 mb-2 shrink-0">
+            <div className="flex items-center justify-between mb-1 px-1">
+              <div className="text-[9px] uppercase tracking-widest text-neutral-500 dark:text-neutral-400 font-bold">
+                Authentic Registries
+              </div>
+              <div className="flex gap-1.5">
+                <CheckCircle2 className="w-3.5 h-3.5 text-red-600 dark:text-red-500" title="Analyze Official Doc / ID" />
+                <Database className="w-3.5 h-3.5 text-sky-600 dark:text-sky-500" title="Source & Service Registry" />
+                <Network className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-500" title="Belgian Knowledge Graph" />
+                <ShieldAlert className="w-3.5 h-3.5 text-amber-600 dark:text-amber-500" title="Admin Control Dashboard" />
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Upload Functionality (Below Sign-in with Google) */}
         <div className="pt-3 border-t border-neutral-200 dark:border-neutral-800 mb-2 shrink-0">
