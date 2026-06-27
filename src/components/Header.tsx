@@ -54,7 +54,7 @@ export function Header({
 
         <div className="flex items-center gap-2">
           <img src="https://eburon.ai/icon-eburon.svg" alt="Eburon" className="w-5 h-5 md:hidden" />
-          <span className="text-xs font-bold text-neutral-800 dark:text-neutral-100 tracking-wider font-mono">EBURON NL DATA ASSISTANT</span>
+          <span className="text-xs font-bold text-neutral-800 dark:text-neutral-100 tracking-wider font-mono">ASSISTANT</span>
         </div>
       </div>
 
