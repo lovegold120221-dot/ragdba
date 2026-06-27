@@ -23,8 +23,8 @@ function getGenAI() {
   return new GoogleGenAI({ apiKey });
 }
 
-// System prompt for Eburon BE Data
-const SYSTEM_PROMPT = `You are Eburon BE Data, a legitimate Belgium government data assistant that uses official Belgium government websites, authentic sources (FPS Economy, CBE/KBO, FPS Finance/MyMinfin, CSAM, My eBox, Statbel, BOSA, Regional Portals Flanders/Wallonia/Brussels), and verified public datasets to give users precise answers.
+// System prompt for Eburon NL Data
+const SYSTEM_PROMPT = `You are Eburon NL Data, an authentic Belgian government data assistant that uses official Belgium government websites, authentic sources (FPS Economy, CBE/KBO, FPS Finance/MyMinfin, CSAM, My eBox, Statbel, BOSA, Regional Portals Flanders/Wallonia/Brussels), and verified public datasets to give users precise answers.
 
 Your answers MUST be strictly accurate according to Belgian law and official procedures.
 Always return your response as a valid JSON object matching this schema:
@@ -46,41 +46,68 @@ Rules:
 2. If login is required (e.g. MyMinfin, eBox, CSAM), explicitly explain what the user can do once authenticated.
 3. Keep the tone authoritative, humble, precise, and helpful.`;
 
+// Whitelisted backend Gemini models
+const WHITELISTED_MODELS = {
+  fast: 'gemini-flash-lite-latest',
+  reasoning: 'gemini-flash-lite-latest'
+};
 
+async function safeGenerate(ai: any, preferredModel: string, contents: any, config?: any) {
+  try {
+    return await ai.models.generateContent({
+      model: preferredModel,
+      contents,
+      config
+    });
+  } catch (err: any) {
+    console.warn(`Model ${preferredModel} failed or exceeded quota (${err.message}). Retrying with gemini-2.5-flash.`);
+    const fallbackConfig = { ...config };
+    delete fallbackConfig.thinkingConfig;
+    return await ai.models.generateContent({
+      model: 'gemini-2.5-flash',
+      contents,
+      config: fallbackConfig
+    });
+  }
+}
 
 // API Route: Main Chat RAG Handler
 app.post('/api/chat', async (req, res) => {
   try {
-    const { message, language = 'English', thinkingLevel = 'LOW', history = [] } = req.body;
+    const { message, language = 'English', thinkingLevel = 'LOW', history = [], ragDocs = [] } = req.body;
     
     const ai = getGenAI();
     
     if (!ai) {
-      return res.status(503).json({ error: 'GEMINI_API_KEY not configured. Please set it in your environment variables.' });
+      console.error('GEMINI_API_KEY is missing.');
+      return res.status(400).json({
+        error: true,
+        content: "Configuration Error: GEMINI_API_KEY environment variable is not configured on the server. Please configure your API key in the AI Studio Settings panel."
+      });
     }
 
     const isHighThinking = thinkingLevel === 'HIGH';
-    const modelName = isHighThinking ? 'gemini-3.1-pro-preview' : 'gemini-3.1-flash-lite';
-    
-    const prompt = `User Language preference: ${language}.
-User Question: "${message}"
+    const modelName = isHighThinking ? WHITELISTED_MODELS.reasoning : WHITELISTED_MODELS.fast;
 
-Please answer in ${language} adhering strictly to official Belgian government sources. Format the output strictly as the requested JSON object.`;
+    // Build RAG context from uploaded documents
+    let ragSuffix = '';
+    if (ragDocs.length > 0) {
+      const ragBlock = `=== User-Uploaded Reference Documents ===\n` +
+        `The user has uploaded the following documents for context. Use them to answer when relevant:\n\n` +
+        ragDocs.map((doc: string, i: number) => `--- Document ${i + 1} ---\n${doc}`).join('\n\n') +
+        `\n\n=== End of Uploaded Documents ===\n` +
+        `When answering, prioritize the user's uploaded documents over general knowledge where they conflict. If the answer is not found in the uploaded documents, fall back to official Belgian sources.`;
+      ragSuffix = `\n\n${ragBlock}`;
+    }
+    
+    const prompt = `User Language preference: ${language}.${ragSuffix}\n\nUser Question: "${message}"\n\nPlease answer in ${language} adhering strictly to official Belgian government sources and authentic data. Do not invent. Format the output strictly as the requested JSON object.`;
 
     const config: any = {
       responseMimeType: 'application/json',
       systemInstruction: SYSTEM_PROMPT
     };
 
-    if (isHighThinking) {
-      config.thinkingConfig = { thinkingLevel: 'HIGH' };
-    }
-
-    const response = await ai.models.generateContent({
-      model: modelName,
-      contents: prompt,
-      config
-    });
+    const response = await safeGenerate(ai, modelName, prompt, config);
 
     const text = response.text || '';
     try {
@@ -88,11 +115,16 @@ Please answer in ${language} adhering strictly to official Belgian government so
       return res.json(jsonRes);
     } catch (parseErr) {
       console.error('JSON Parse error from model:', parseErr);
-      return res.status(500).json({ error: 'Failed to parse AI response', raw: text });
+      return res.json({
+        content: text || "Unable to generate structured response."
+      });
     }
   } catch (error: any) {
     console.error('Error in /api/chat:', error);
-    res.status(500).json({ error: 'Internal server error processing your request' });
+    res.status(500).json({
+      error: true,
+      content: "The Eburon NL Data service encountered an unexpected error connecting to the AI Gateway. Please try again."
+    });
   }
 });
 
@@ -103,19 +135,21 @@ app.post('/api/analyze-image', async (req, res) => {
     
     const ai = getGenAI();
     if (!ai) {
-      return res.status(503).json({ error: 'GEMINI_API_KEY not configured. Cannot analyze images.' });
+      return res.status(400).json({
+        error: true,
+        title: "Configuration Error",
+        authenticityAssessment: "GEMINI_API_KEY environment variable is missing on the server."
+      });
     }
 
-    const response = await ai.models.generateContent({
-      model: 'gemini-3.1-pro-preview',
-      contents: [
-        {
-          inlineData: {
-            data: imageBase64,
-            mimeType: mimeType
-          }
-        },
-        `Analyze this uploaded image/document in the context of Belgian government administration (eID, tax bill, residence card, CBE extract, VAT form, building permit).
+    const response = await safeGenerate(ai, WHITELISTED_MODELS.reasoning, [
+      {
+        inlineData: {
+          data: imageBase64,
+          mimeType: mimeType
+        }
+      },
+      `Analyze this uploaded image/document in the context of Belgian government administration (eID, tax bill, residence card, CBE extract, VAT form, building permit).
 Language: ${language}. User query: ${prompt}.
 Return a clean JSON object with properties:
 {
@@ -127,10 +161,8 @@ Return a clean JSON object with properties:
   "nextSteps": ["Actionable step 1", "Actionable step 2"],
   "officialLink": "https://..."
 }`
-      ],
-      config: {
-        responseMimeType: 'application/json'
-      }
+    ], {
+      responseMimeType: 'application/json'
     });
 
     const parsed = JSON.parse(response.text || '{}');
@@ -169,7 +201,7 @@ async function startServer() {
   }
 
   app.listen(PORT, '0.0.0.0', () => {
-    console.log(`Eburon BE Data server running on http://0.0.0.0:${PORT}`);
+    console.log(`Eburon NL Data server running on http://0.0.0.0:${PORT}`);
   });
 }
 

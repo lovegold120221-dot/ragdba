@@ -1,0 +1,45 @@
+{
+  "entities": [
+    {
+      "name": "ChatSession",
+      "properties": {
+        "userId": { "type": "string" },
+        "title": { "type": "string" },
+        "language": { "type": "string" },
+        "createdAt": { "type": "number" },
+        "updatedAt": { "type": "number" }
+      }
+    },
+    {
+      "name": "ChatMessage",
+      "properties": {
+        "sessionId": { "type": "string" },
+        "userId": { "type": "string" },
+        "role": { "type": "string" },
+        "content": { "type": "string" },
+        "responsibleBranch": { "type": "string" },
+        "loginRequired": { "type": "boolean" },
+        "loginMethod": { "type": "string" },
+        "officialSource": { "type": "string" },
+        "sourceUrl": { "type": "string" },
+        "requirements": { "type": "array", "items": { "type": "string" } },
+        "steps": { "type": "array", "items": { "type": "string" } },
+        "regionalWarning": { "type": "string" },
+        "imageUrl": { "type": "string" },
+        "isThinking": { "type": "boolean" },
+        "createdAt": { "type": "number" }
+      }
+    },
+    {
+      "name": "OfficialSource",
+      "properties": {
+        "sourceName": { "type": "string" },
+        "category": { "type": "string" },
+        "governmentLevel": { "type": "string" },
+        "baseUrl": { "type": "string" },
+        "trustScore": { "type": "number" },
+        "active": { "type": "boolean" }
+      }
+    }
+  ]
+}

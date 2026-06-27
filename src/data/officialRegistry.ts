@@ -271,3 +271,101 @@ export const MVP_QUESTIONS_LIST = [
   "Where is the official government link?"
 ];
 
+// Rich verified answers for MVP quick clicks
+export const MVP_VERIFIED_RESPONSES: Record<string, any> = {
+  "How do I start a company in Belgium?": {
+    content: "Starting a business in Belgium involves several coordinated steps across Federal and Regional levels. Here is the verified procedure based on official data from FPS Economy.\n\n### Overview\nBefore initiating commercial activity, every entrepreneur or corporation must register with the **Crossroads Bank for Enterprises (CBE) / Kruispuntbank van Ondernemingen (KBO) / Banque-Carrefour des Entreprises (BCE)**. If you sell commercial goods or taxable services, VAT activation via **MyMinfin** is mandatory.",
+    responsibleBranch: "FPS Economy / CBE",
+    loginRequired: true,
+    loginMethod: "itsme® / CSAM",
+    officialSource: "belgium.be & FPS Economy",
+    sourceUrl: "https://www.belgium.be/en/economy/business",
+    requirements: [
+      "Valid Identity Card (eID) or Belgian Residence Card",
+      "Business Bank Account opened with a recognized financial institution",
+      "Proof of basic management knowledge (if required in Brussels or Wallonia)"
+    ],
+    steps: [
+      "Choose legal form (Sole trader / Eenmanszaak vs. BV-SRL)",
+      "Open a business bank account and obtain a bank financial certificate",
+      "Register with an accredited Enterprise Counter (Ondernemingsloket / Guichet d'entreprises)",
+      "Activate VAT number via FPS Finance portal (MyMinfin)",
+      "Affiliate with a recognized Social Insurance Fund within 90 days"
+    ],
+    regionalWarning: "Demonstration of basic management skills is abolished in Flanders, but remains strictly required in Brussels-Capital Region and Wallonia.",
+    confidence: "High (Verified Official Source)"
+  },
+  "Where can I check a Belgian company?": {
+    content: "You can check any registered Belgian company or sole trader free of charge through the **CBE Public Search (KBO Public Search / BCE Public)** maintained by FPS Economy.\n\n### What data is available?\nYou can search by Enterprise Number (10 digits starting with 0 or 1, e.g. `0123.456.789`) or company name. The public registry displays active establishment units, official NACE business activity codes, legal form, registered address, and authorized representatives.",
+    responsibleBranch: "FPS Economy / CBE",
+    loginRequired: false,
+    loginMethod: "none",
+    officialSource: "CBE Public Search Portal",
+    sourceUrl: "https://kbopub.economie.fgov.be/kbopub/zoeken-naar-onderneming-form.html",
+    requirements: [
+      "Belgian Enterprise Number (Ondernemingsnummer / Numéro d'entreprise)",
+      "OR Official Registered Company Name"
+    ],
+    steps: [
+      "Open the official CBE Public Search tool",
+      "Enter the 10-digit Enterprise Number or exact legal entity name",
+      "Select 'Search' to view official authentic data"
+    ],
+    regionalWarning: null,
+    confidence: "High (Verified Official Source)"
+  },
+  "What is the Crossroads Bank for Enterprises?": {
+    content: "The **Crossroads Bank for Enterprises (CBE)** — known in Dutch as **Kruispuntbank van Ondernemingen (KBO)** and in French as **Banque-Carrefour des Entreprises (BCE)** — is the official federal secure register containing all identification data concerning enterprises and their establishment units in Belgium.\n\n### Role & Authentic Source\nManaged by FPS Economy, the CBE acts as the single authentic source of truth for business identity under the 'Only Once' legislation. Government departments are legally required to fetch company data directly from the CBE rather than asking citizens to re-submit documents.",
+    responsibleBranch: "FPS Economy / CBE",
+    loginRequired: false,
+    loginMethod: "none",
+    officialSource: "FPS Economy CBE Directorate",
+    sourceUrl: "https://economie.fgov.be/en/themes/enterprises/crossroads-bank-enterprises",
+    requirements: [],
+    steps: [
+      "Access public extracts via KBO Public Search",
+      "Access private company notifications via My Enterprise (login required)"
+    ],
+    regionalWarning: null,
+    confidence: "High (Verified Official Source)"
+  },
+  "How do I access MyMinfin?": {
+    content: "**MyMinfin** is the official secure online portal of the Federal Public Service Finance (FPS Finance / FOD Financiën / SPF Finances) where citizens and enterprises manage tax returns, VAT filings, withholding taxes, property cadastral records, and rental agreements.\n\n### Authentication Method\nTo access MyMinfin, you must authenticate through the federal **CSAM** gateway using **itsme®**, a Belgian electronic Identity Card (**eID**) with card reader, or the mobile **MyGov.be** application.",
+    responsibleBranch: "FPS Finance / MyMinfin",
+    loginRequired: true,
+    loginMethod: "itsme® / CSAM",
+    officialSource: "FPS Finance Portal",
+    sourceUrl: "https://www.myminfin.be",
+    requirements: [
+      "Belgian eID card with PIN code or active itsme® mobile account",
+      "CSAM digital access token"
+    ],
+    steps: [
+      "Navigate to official portal https://www.myminfin.be",
+      "Click 'Sign In' (Log in / Connexion)",
+      "Choose your digital key (itsme® or eID)",
+      "Select whether you log in 'In your own name' or 'On behalf of an enterprise'"
+    ],
+    regionalWarning: "While personal income tax and corporate tax are federal, property withholding tax (Onroerende voorheffing / Précompte immobilier) bills are managed directly by Regional tax offices (Vlaamse Belastingdienst VLABEL, SPW Fiscalité, or Brussels Fiscalité).",
+    confidence: "High (Verified Official Source)"
+  },
+  "What is My eBox?": {
+    content: "**My eBox** is the official digital mailbox provided by the Belgian government where citizens safely receive personal official notifications, tax assessment notices, pension summaries, and municipal documents.\n\n### For Businesses: e-Box Enterprise\nWhile individual citizens use *My eBox*, companies and employers receive official correspondence from NSSO (RSZ/ONSS) and government departments via **e-Box Enterprise**.",
+    responsibleBranch: "BOSA / NSSO",
+    loginRequired: true,
+    loginMethod: "itsme® / CSAM",
+    officialSource: "My eBox Federal Gateway",
+    sourceUrl: "https://myebox.be",
+    requirements: [
+      "Belgian National Register Number (Rijksregisternummer)",
+      "CSAM authenticated login"
+    ],
+    steps: [
+      "Go to https://myebox.be",
+      "Authenticate with itsme® or eID",
+      "Link your email address to receive immediate SMS/email alert pings whenever a new government letter arrives"
+    ],
+    regionalWarning: null,
+    confidence: "High (Verified Official Source)"
+  }
+};

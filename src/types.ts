@@ -1,6 +1,18 @@
 export type Language = 'EN' | 'NL' | 'FR' | 'DE';
 export type ThinkingLevel = 'LOW' | 'HIGH';
 
+export interface RagDocument {
+  id: string;
+  userId: string;
+  fileName: string;
+  fileType: string;
+  content: string;
+  summary?: string;
+  embedding?: number[];
+  similarityScore?: number;
+  createdAt: number;
+}
+
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';

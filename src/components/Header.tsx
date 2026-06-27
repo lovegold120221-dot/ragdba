@@ -1,4 +1,5 @@
-import { Menu, Zap, Brain } from 'lucide-react';
+import { useState, useRef, useEffect } from 'react';
+import { Menu, Zap, Brain, ChevronDown, PanelLeftClose, PanelLeft } from 'lucide-react';
 import { Language, ThinkingLevel } from '../types';
 
 interface HeaderProps {
@@ -7,22 +8,44 @@ interface HeaderProps {
   thinkingLevel: ThinkingLevel;
   onToggleThinking: () => void;
   onOpenMobileSidebar: () => void;
+  sidebarCollapsed: boolean;
+  onToggleSidebar: () => void;
 }
+
+const LANGUAGE_LABELS: Record<Language, string> = {
+  EN: 'English',
+  NL: 'Nederlands',
+  FR: 'Français',
+  DE: 'Deutsch'
+};
 
 export function Header({
   language,
   onSelectLanguage,
   thinkingLevel,
   onToggleThinking,
-  onOpenMobileSidebar
+  onOpenMobileSidebar,
+  sidebarCollapsed,
+  onToggleSidebar
 }: HeaderProps) {
-  const languages: Language[] = ['EN', 'NL', 'FR', 'DE'];
+  const [langOpen, setLangOpen] = useState(false);
+  const langRef = useRef<HTMLDivElement>(null);
 
   const isHighThinking = thinkingLevel === 'HIGH';
 
+  useEffect(() => {
+    function handleClick(e: MouseEvent) {
+      if (langRef.current && !langRef.current.contains(e.target as Node)) {
+        setLangOpen(false);
+      }
+    }
+    document.addEventListener('mousedown', handleClick);
+    return () => document.removeEventListener('mousedown', handleClick);
+  }, []);
+
   return (
     <header className="h-16 bg-white border-b border-neutral-200 flex items-center justify-between px-4 sm:px-8 shrink-0 relative z-20 shadow-2xs">
-      {/* Left section: Hamburger (mobile) + Title Badge */}
+      {/* Left section */}
       <div className="flex items-center gap-3">
         <button
           onClick={onOpenMobileSidebar}
@@ -31,54 +54,80 @@ export function Header({
         >
           <Menu className="w-5 h-5" />
         </button>
+        {/* Sidebar collapse toggle (desktop) */}
+        <button
+          onClick={onToggleSidebar}
+          className="hidden md:flex p-2 rounded-lg hover:bg-neutral-100 text-neutral-500 cursor-pointer"
+          aria-label={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          title={sidebarCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          {sidebarCollapsed ? <PanelLeft className="w-5 h-5" /> : <PanelLeftClose className="w-5 h-5" />}
+        </button>
         <div className="flex items-center gap-2">
-          <span className="text-xs font-semibold text-neutral-500 tracking-wider">EBURON BE DATA</span>
+          <img src="https://eburon.ai/icon-eburon.svg" alt="Eburon" className="w-5 h-5 md:hidden" />
+          <span className="text-xs font-semibold text-neutral-500 tracking-wider">EBURON NL DATA ASSISTANT</span>
         </div>
       </div>
 
-      {/* Right section: Thinking Mode Toggle + Language Selector */}
+      {/* Right section */}
       <div className="flex items-center gap-4 sm:gap-6">
-        {/* Thinking Mode Switch */}
+        {/* Reasoning Mode Toggle */}
         <button
           onClick={onToggleThinking}
-          title={isHighThinking ? "High Thinking Mode Enabled" : "Standard Low-Latency Mode"}
+          title={isHighThinking ? "Deep Analytical Reasoning Enabled" : "Concise Fast Mode Enabled"}
           className={`hidden sm:flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-medium transition-all cursor-pointer ${
-            isHighThinking 
-              ? 'bg-amber-50 border-[#FFD700] text-amber-900 shadow-2xs' 
+            isHighThinking
+              ? 'bg-amber-50 border-[#FFD700] text-amber-900 shadow-2xs'
               : 'bg-neutral-50 border-neutral-200 text-neutral-600 hover:bg-neutral-100'
           }`}
         >
           {isHighThinking ? (
             <>
               <Brain className="w-3.5 h-3.5 text-[#E30613] animate-pulse" />
-              <span>High Thinking Active</span>
+              <span>Deep Reasoning</span>
             </>
           ) : (
             <>
               <Zap className="w-3.5 h-3.5 text-neutral-400" />
-              <span>Low-Latency Flash</span>
+              <span>Fast Mode</span>
             </>
           )}
         </button>
 
-        {/* Language Buttons */}
-        <div className="flex items-center gap-3 sm:gap-4 text-xs font-medium uppercase tracking-wider">
-          {languages.map(lang => {
-            const isSelected = language === lang;
-            return (
-              <button
-                key={lang}
-                onClick={() => onSelectLanguage(lang)}
-                className={`transition-all cursor-pointer px-1 py-0.5 rounded ${
-                  isSelected 
-                    ? 'text-[#E30613] font-bold underline decoration-2 decoration-[#FFD700] underline-offset-4' 
-                    : 'text-neutral-400 hover:text-neutral-800 opacity-60 hover:opacity-100'
-                }`}
-              >
-                {lang}
-              </button>
-            );
-          })}
+        {/* Compact Language Dropdown */}
+        <div className="relative" ref={langRef}>
+          <button
+            onClick={() => setLangOpen(v => !v)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-xs font-bold uppercase tracking-wider text-neutral-800 transition-all cursor-pointer"
+          >
+            <span>{language}</span>
+            <ChevronDown className={`w-3.5 h-3.5 text-neutral-400 transition-transform ${langOpen ? 'rotate-180' : ''}`} />
+          </button>
+
+          {langOpen && (
+            <div className="absolute right-0 top-full mt-1.5 bg-white border border-neutral-200 rounded-xl shadow-lg min-w-[140px] py-1 z-50 animate-fade-in">
+              {(['EN', 'NL', 'FR', 'DE'] as Language[]).map(lang => {
+                const isSelected = language === lang;
+                return (
+                  <button
+                    key={lang}
+                    onClick={() => { onSelectLanguage(lang); setLangOpen(false); }}
+                    className={`w-full text-left px-3.5 py-2 text-xs flex items-center justify-between transition-colors cursor-pointer ${
+                      isSelected
+                        ? 'bg-amber-50 text-amber-900 font-bold'
+                        : 'text-neutral-600 hover:bg-neutral-50 hover:text-neutral-900'
+                    }`}
+                  >
+                    <span className="flex items-center gap-2">
+                      <span className="font-mono font-bold">{lang}</span>
+                      <span className="text-[10px] text-neutral-400 font-normal">{LANGUAGE_LABELS[lang]}</span>
+                    </span>
+                    {isSelected && <span className="w-1.5 h-1.5 rounded-full bg-[#E30613]" />}
+                  </button>
+                );
+              })}
+            </div>
+          )}
         </div>
       </div>
     </header>

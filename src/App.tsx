@@ -4,8 +4,8 @@ import { Header } from './components/Header';
 import { ChatFeed } from './components/ChatFeed';
 import { InputComposer } from './components/InputComposer';
 import { PhotoAnalyzerModal, RegistryModal, KnowledgeGraphModal, AdminDashboardModal } from './components/Modals';
-import { ChatMessage, ChatSession, Language, ThinkingLevel } from './types';
-import { auth, onAuthStateChanged, User, saveChatSession, saveChatMessage, getUserSessions, getSessionMessages } from './lib/firebase';
+import { ChatMessage, ChatSession, Language, ThinkingLevel, RagDocument } from './types';
+import { auth, onAuthStateChanged, User, saveChatSession, saveChatMessage, getUserSessions, getSessionMessages, saveRagDocument, getUserRagDocuments } from './lib/firebase';
 
 export default function App() {
   const [user, setUser] = useState<User | null>(null);
@@ -22,6 +22,8 @@ export default function App() {
   const [isGraphOpen, setIsGraphOpen] = useState(false);
   const [isAdminOpen, setIsAdminOpen] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [ragDocs, setRagDocs] = useState<RagDocument[]>([]);
 
   // Auth Listener
   useEffect(() => {
@@ -115,6 +117,14 @@ export default function App() {
     }
 
     try {
+      // Prepare RAG context: include text doc contents, and metadata for images/audio
+      const ragContext = ragDocs.map(doc => {
+        if (doc.fileType === 'file') {
+          return `[Uploaded Document: ${doc.fileName}]\nContent:\n${doc.content.slice(0, 5000)}\n${doc.content.length > 5000 ? '...(truncated)' : ''}`;
+        }
+        return `[Uploaded ${doc.fileType}: ${doc.fileName}] ${doc.summary || ''}`;
+      });
+
       const res = await fetch('/api/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -122,23 +132,12 @@ export default function App() {
           message: text,
           language: language === 'EN' ? 'English' : language === 'NL' ? 'Dutch' : language === 'FR' ? 'French' : 'German',
           thinkingLevel,
-          history: messages
+          history: messages,
+          ragDocs: ragContext
         })
       });
 
       const data = await res.json();
-
-      // Handle API error responses (503/500 with { error: "..." })
-      if (!res.ok && data.error) {
-        setMessages(prev => [...prev, {
-          id: 'err-' + Date.now(),
-          role: 'assistant',
-          content: `Unable to process your request: ${data.error}`,
-          createdAt: Date.now()
-        }]);
-        setLoading(false);
-        return;
-      }
 
       const aiMsgId = 'msg-ai-' + Date.now();
       const aiMsg: ChatMessage = {
@@ -175,6 +174,23 @@ export default function App() {
     }
   }
 
+  // Load RAG documents when user changes
+  useEffect(() => {
+    if (!user) return;
+    async function loadRag() {
+      const docs = await getUserRagDocuments(user.uid);
+      setRagDocs(docs);
+    }
+    loadRag();
+  }, [user]);
+
+  async function handleUploadRagDocument(doc: RagDocument) {
+    setRagDocs(prev => [doc, ...prev]);
+    if (user) {
+      await saveRagDocument(doc);
+    }
+  }
+
   function handleToggleThinking() {
     setThinkingLevel(prev => prev === 'LOW' ? 'HIGH' : 'LOW');
   }
@@ -194,6 +210,9 @@ export default function App() {
         user={user}
         isOpenMobile={isMobileSidebarOpen}
         onCloseMobile={() => setIsMobileSidebarOpen(false)}
+        collapsed={sidebarCollapsed}
+        ragDocs={ragDocs}
+        onUploadRagDocument={handleUploadRagDocument}
       />
 
       {/* Main Content Pane */}
@@ -204,13 +223,15 @@ export default function App() {
           thinkingLevel={thinkingLevel}
           onToggleThinking={handleToggleThinking}
           onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
+          sidebarCollapsed={sidebarCollapsed}
+          onToggleSidebar={() => setSidebarCollapsed(v => !v)}
         />
 
         <ChatFeed
           messages={messages}
           loading={loading}
           onQuickQuestion={(q) => handleSendMessage(q)}
-          userInitials={user?.email?.[0].toUpperCase() || 'JD'}
+          userInitials={user?.email?.[0].toUpperCase() || 'NL'}
           userPhoto={user?.photoURL}
         />
 

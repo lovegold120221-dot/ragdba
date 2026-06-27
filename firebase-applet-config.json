@@ -1,0 +1,10 @@
+{
+  "projectId": "macxtoken",
+  "appId": "1:834659918452:web:6b8a7d244016e8d3372721",
+  "apiKey": "AIzaSyDyxhxGlAbPNxGi0-q2bQN1LEKaeKKtiZk",
+  "authDomain": "macxtoken.firebaseapp.com",
+  "firestoreDatabaseId": "remixed-firestore-database-id",
+  "storageBucket": "macxtoken.firebasestorage.app",
+  "messagingSenderId": "834659918452",
+  "measurementId": ""
+}

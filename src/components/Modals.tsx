@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { X, ShieldCheck, ExternalLink, Loader2, RefreshCw, AlertCircle, FileSearch, Sparkles } from 'lucide-react';
 import { OFFICIAL_SOURCES, GOVERNMENT_ENTITIES, GOVERNMENT_SERVICES, DATASETS } from '../data/officialRegistry';
 
-// 1. PHOTO ANALYZER MODAL
+// 1. PHOTO ANALYZER MODAL (Authentic Source Vision)
 export function PhotoAnalyzerModal({ onClose }: { onClose: () => void }) {
   const [imgBase64, setImgBase64] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
@@ -52,7 +52,7 @@ export function PhotoAnalyzerModal({ onClose }: { onClose: () => void }) {
             <div className="p-2 bg-[#E30613] text-white rounded-lg"><FileSearch className="w-5 h-5" /></div>
             <div>
               <h3 className="font-bold text-neutral-900">Belgian Official Document AI Analyzer</h3>
-              <p className="text-[10px] text-neutral-500 font-mono">AI-powered document analysis</p>
+              <p className="text-[10px] text-neutral-500 font-mono">Authentic Source AI Vision Engine</p>
             </div>
           </div>
           <button onClick={onClose} className="p-2 hover:bg-neutral-100 rounded-lg text-neutral-400 cursor-pointer"><X className="w-5 h-5" /></button>
@@ -71,7 +71,7 @@ export function PhotoAnalyzerModal({ onClose }: { onClose: () => void }) {
               </div>
             ) : (
               <label className="cursor-pointer block py-8 space-y-3">
-                <div className="w-12 h-12 bg-black text-[#FFD700] rounded-xl mx-auto flex items-center justify-center"><Sparkles className="w-6 h-6" /></div>
+                <img src="https://eburon.ai/icon-eburon.svg" alt="Eburon" className="w-12 h-12 mx-auto" />
                 <div className="text-sm font-semibold text-neutral-800">Upload Belgian eID, VAT Notice, or CBE Certificate</div>
                 <p className="text-xs text-neutral-400 max-w-sm mx-auto">Supports JPEG, PNG, WEBP official government letters or certificates</p>
                 <input type="file" accept="image/*" onChange={handleFile} className="hidden" />
@@ -262,7 +262,7 @@ export function KnowledgeGraphModal({ onClose }: { onClose: () => void }) {
         </div>
 
         <div className="py-8 space-y-8 text-left flex-1">
-          {/* Visual Graph Mock */}
+          {/* Visual Graph Topology */}
           <div className="relative bg-[#1A1A1A] rounded-2xl p-8 border border-white/10 overflow-hidden flex flex-col items-center justify-center min-h-[320px]">
             <div className="absolute inset-0 bg-[radial-gradient(#FFD700_1px,transparent_1px)] [background-size:24px_24px] opacity-15"></div>
             
@@ -372,7 +372,7 @@ export function AdminDashboardModal({ onClose }: { onClose: () => void }) {
               <span>Mandatory Compliance Policy Statement</span>
             </div>
             <p className="text-white/80">
-              "Eburon Belgium Data provides guidance based on official public Belgian sources. It is not legal, tax, immigration, or government advice. Always verify final actions through the official government service."
+              "Eburon NL Data provides guidance based strictly on authentic public Belgian sources. It is not legal, tax, immigration, or government advice. Always verify final actions through the official government service."
             </p>
             <div className="pt-2 border-t border-white/10 flex justify-between text-[10px] text-white/40 font-mono">
               <span>No model training on private user CSAM data</span>

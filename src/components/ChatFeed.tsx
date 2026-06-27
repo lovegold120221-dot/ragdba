@@ -27,25 +27,23 @@ export function ChatFeed({
   return (
     <section className="flex-1 overflow-y-auto p-4 sm:p-12 bg-[#FBFBFB] custom-scrollbar">
       <div className="max-w-3xl mx-auto space-y-8 pb-12">
-        {/* Welcome State / MVP Quick Clicks */}
+        {/* Welcome State */}
         {messages.length === 0 && (
           <div className="text-center py-8 sm:py-16 space-y-6 animate-fade-in">
-            <div className="w-16 h-16 bg-black text-[#FFD700] rounded-2xl mx-auto flex items-center justify-center shadow-lg border border-neutral-800">
-              <Sparkles className="w-8 h-8 text-[#E30613]" />
-            </div>
+            <img src="https://eburon.ai/icon-eburon.svg" alt="Eburon Logo" className="w-16 h-16 mx-auto drop-shadow-md" />
             <div className="space-y-2">
               <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-neutral-900">
-                Eburon BE Data
+                Eburon NL Data RAG Assistant
               </h2>
               <p className="text-xs sm:text-sm text-neutral-500 max-w-lg mx-auto leading-relaxed">
-                Ask anything about starting a company, residence procedures, VAT filings on MyMinfin, Crossroads Bank for Enterprises (CBE), or public DCAT datasets.
+                Ask anything about starting a company, residence procedures, VAT filings on MyMinfin, Crossroads Bank for Enterprises (CBE), or authentic public DCAT datasets.
               </p>
             </div>
 
             {/* Quick Clicks Grid */}
             <div className="pt-6">
               <p className="text-[10px] uppercase tracking-widest text-neutral-400 font-bold mb-4">
-                Suggested Inquiries
+                Common Inquiries
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 max-w-2xl mx-auto text-left">
                 {MVP_QUESTIONS_LIST.slice(0, 6).map((q, idx) => (
@@ -91,18 +89,16 @@ export function ChatFeed({
             );
           }
 
-          // Assistant Card Response (Strictly adopting Clean Minimalism theme)
+          // Assistant Card Response
           return (
             <div key={msg.id} className="flex gap-4 animate-fade-in">
-              <div className="w-8 h-8 rounded-full bg-black shrink-0 flex items-center justify-center text-[10px] font-bold text-white uppercase shadow-sm">
-                EB
-              </div>
+              <img src="https://eburon.ai/icon-eburon.svg" alt="Eburon" className="w-8 h-8 rounded-full shrink-0 border border-neutral-200 bg-white p-1 shadow-2xs" />
               <div className="pt-1 space-y-6 w-full">
                 {/* Thinking Indicator */}
                 {msg.isThinking && (
                   <div className="inline-flex items-center gap-2 bg-amber-50 text-amber-800 border border-amber-200 px-2.5 py-1 rounded-md text-[10px] font-mono font-medium">
                     <Sparkles className="w-3 h-3 text-[#E30613]" />
-                    <span>Deep Thinking Analysis Applied</span>
+                    <span>Comprehensive Analytical Reasoning Applied</span>
                   </div>
                 )}
 
@@ -207,48 +203,45 @@ export function ChatFeed({
                   </div>
                 )}
 
-                {/* Footer Official Link Buttons */}
-                <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-neutral-100">
-                  {msg.sourceUrl ? (
-                    <a
-                      href={msg.sourceUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[10px] font-bold bg-[#1A1A1A] hover:bg-black text-white px-4 py-2 rounded-full uppercase tracking-tighter inline-flex items-center gap-1.5 transition-colors shadow-xs"
-                    >
-                      <span>View Official Source: {msg.officialSource || 'belgium.be'}</span>
-                      <ExternalLink className="w-3 h-3 text-[#FFD700]" />
-                    </a>
-                  ) : (
-                    <a
-                      href="https://www.belgium.be"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="text-[10px] font-bold bg-[#1A1A1A] hover:bg-black text-white px-4 py-2 rounded-full uppercase tracking-tighter inline-flex items-center gap-1.5 transition-colors shadow-xs"
-                    >
-                      <span>View Official Source: belgium.be</span>
-                      <ExternalLink className="w-3 h-3 text-[#FFD700]" />
-                    </a>
-                  )}
+                {/* Source Data Inline Block */}
+                {msg.sourceUrl && (
+                  <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-4 space-y-2">
+                    <div className="text-[10px] font-bold text-neutral-400 uppercase tracking-widest flex items-center gap-2">
+                      <ExternalLink className="w-3 h-3" />
+                      <span>Official Source Data Available</span>
+                    </div>
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+                      <div className="flex items-center gap-2 min-w-0">
+                        <span className="text-xs font-semibold text-neutral-800 truncate">
+                          {msg.officialSource || 'Official Registry'}
+                        </span>
+                        <span className="text-[9px] bg-emerald-100 text-emerald-700 px-1.5 py-0.5 rounded font-bold shrink-0">
+                          VERIFIED
+                        </span>
+                      </div>
+                      <a
+                        href={msg.sourceUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[10px] font-medium text-neutral-500 hover:text-neutral-800 inline-flex items-center gap-1 transition-colors shrink-0"
+                      >
+                        <span>Open at source</span>
+                        <ExternalLink className="w-3 h-3" />
+                      </a>
+                    </div>
+                  </div>
+                )}
 
-                  <a
-                    href="https://www.myminfin.be"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[10px] font-bold border border-neutral-200 hover:border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-800 px-4 py-2 rounded-full uppercase tracking-tighter inline-flex items-center gap-1.5 transition-all"
-                  >
-                    <span>Open MyMinfin</span>
-                    <ExternalLink className="w-3 h-3 text-neutral-400" />
-                  </a>
-
-                  <a
-                    href="https://kbopub.economie.fgov.be"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-[10px] font-bold border border-neutral-200 hover:border-neutral-300 bg-white hover:bg-neutral-50 text-neutral-800 px-4 py-2 rounded-full uppercase tracking-tighter inline-flex items-center gap-1.5 transition-all"
-                  >
-                    <span>CBE Public Search</span>
-                  </a>
+                {/* Reference Links as secondary */}
+                <div className="flex flex-wrap gap-2 pt-2">
+                  <span className="text-[9px] text-neutral-400 font-mono">
+                    Data sourced from authentic Belgian registries. Verify at:{' '}
+                    <a href="https://www.belgium.be" target="_blank" rel="noreferrer" className="underline hover:text-neutral-700">belgium.be</a>
+                    {' · '}
+                    <a href="https://www.myminfin.be" target="_blank" rel="noreferrer" className="underline hover:text-neutral-700">MyMinfin</a>
+                    {' · '}
+                    <a href="https://kbopub.economie.fgov.be" target="_blank" rel="noreferrer" className="underline hover:text-neutral-700">CBE</a>
+                  </span>
                 </div>
               </div>
             </div>
