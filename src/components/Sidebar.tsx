@@ -186,6 +186,42 @@ export function Sidebar({
         />
       )}
 
+      {/* Auth overlay when not logged in and on auth page */}
+      {(!user || user.uid === 'federal-citizen-node') && window.location.pathname === '/auth' && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 md:hidden">
+          <div className="bg-white dark:bg-neutral-950 rounded-2xl p-6 w-full max-w-md border border-neutral-300 dark:border-neutral-800 shadow-2xl">
+            <div className="text-center mb-6">
+              <div className="w-16 h-16 rounded-full bg-neutral-900 dark:bg-neutral-800 flex items-center justify-center mx-auto mb-4">
+                <Shield className="w-8 h-8 text-red-600 dark:text-red-500" />
+              </div>
+              <h2 className="text-xl font-bold text-neutral-900 dark:text-white mb-2">Authentication Required</h2>
+              <p className="text-neutral-600 dark:text-neutral-400 text-sm">Please sign in with Google to access the Federal Gateway</p>
+            </div>
+            <div className="space-y-4">
+              {user && user.uid === 'federal-citizen-node' ? (
+                <div className="bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg p-4">
+                  <p className="text-amber-800 dark:text-amber-300 text-sm font-medium mb-2">Guest Access Limited</p>
+                  <p className="text-amber-700 dark:text-amber-400 text-xs">For full access to authentic Belgian government services, please create an account or sign in with Google.</p>
+                </div>
+              ) : null}
+              <button
+                onClick={handleLogin}
+                disabled={authLoading}
+                className="w-full py-3 px-4 bg-neutral-900 dark:bg-neutral-800 hover:bg-neutral-800 dark:hover:bg-neutral-750 text-white rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-all cursor-pointer shadow-2xs disabled:opacity-50"
+              >
+                <LogIn className="w-4 h-4 text-amber-400" />
+                <span>{authLoading ? 'Connecting...' : 'Sign in with Google'}</span>
+              </button>
+            </div>
+            <div className="mt-6 pt-4 border-t border-neutral-200 dark:border-neutral-800">
+              <p className="text-[10px] text-neutral-500 dark:text-neutral-400 text-center italic">
+                Authentication via Google's Identity Platform • GDPR compliant
+              </p>
+            </div>
+          </div>
+        </div>
+      )}
+
       <aside className={sidebarClasses}>
         {/* Brand Logo Header */}
         <div className={`flex items-center mb-6 ${isCollapsed ? 'justify-center' : 'justify-between'}`}>
@@ -248,7 +284,18 @@ export function Sidebar({
         </nav>
 
         {/* Government Data Modules & Admin Tools */}
-        <div className="space-y-1 pt-3 border-t border-neutral-200 dark:border-neutral-800 mb-4 shrink-0">
+        {user && user.uid !== 'federal-citizen-node' && (
+          <div className="space-y-1 pt-3 border-t border-neutral-200 dark:border-neutral-800 mb-4 shrink-0">
+            <div className="flex items-center justify-between mb-2">
+              <div className="text-[10px] uppercase tracking-widest text-neutral-500 dark:text-neutral-400 mb-1.5 px-1 font-bold">
+                Admin Controls
+              </div>
+              {isCollapsed && (
+                <Shield className="w-3.5 h-3.5 text-neutral-400 dark:text-neutral-500" />
+              )}
+            </div>
+          </div>
+        )}
           {!isCollapsed && (
             <div className="text-[10px] uppercase tracking-widest text-neutral-500 dark:text-neutral-400 mb-1.5 px-1 font-bold">
               Authentic Registries
