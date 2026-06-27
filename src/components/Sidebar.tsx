@@ -337,7 +337,6 @@ export function Sidebar({
             <ShieldAlert className="w-4 h-4 text-amber-600 dark:text-amber-500 shrink-0" />
             {!isCollapsed && <span>Admin Control Dashboard</span>}
           </button>
-        </div>
 
         {/* Federal Gateway Connection Status */}
         <div className="pt-3 border-t border-neutral-200 dark:border-neutral-800 mb-3 shrink-0">
