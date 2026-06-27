@@ -15,4 +15,4 @@ const GDPR_PRIVACY_TEXT = `By clicking "Sign in with Google", I consent to the p
 
 I have read and understood the privacy policy. I agree to the processing of my data for this authentication purpose.
 
-For full details, please refer to our complete Privacy Policy at eburon.ai/privacy.
+For full details, please refer to our complete Privacy Policy at eburon.ai/privacy`; // End of consent text
